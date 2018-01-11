@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/rootlayout"
+    android:background="@color/background_color"
+    tools:context="com.uberclone.whereyou.Activities.LoginActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/whereyou" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/loginSignup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="120dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/login_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="0dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:text="Login"
+                    android:textAlignment="center"
+                    android:textColor="#ffffff"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:text="or"
+                    android:textAlignment="center"
+                    android:textColor="#ffffff"
+                    android:textSize="20dp" />
+
+                <TextView
+                    android:id="@+id/signup_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:text="Sign up"
+                    android:textAlignment="center"
+                    android:textColor="@color/press_login_signup"
+                    android:textSize="20dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/loginform"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/loginSignup"
+                android:layout_marginTop="30dp"
+                android:orientation="vertical">
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/email_hint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:textColorHint="@color/colorWhite">
+
+                    <EditText
+                        android:id="@+id/emailEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/login_hint_email"
+                        android:inputType="textEmailAddress"
+                        android:textColor="#818181"
+                        android:textColorHint="#818181"
+                        android:textSize="12dp" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/username_hint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:textColorHint="@color/colorWhite"
+                    android:visibility="gone">
+
+                    <EditText
+                        android:id="@+id/usernameEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/login_hint_username"
+                        android:inputType="text"
+                        android:textColor="#818181"
+                        android:textColorHint="#818181"
+                        android:textSize="12dp" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/password_hint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:textColorHint="@color/colorWhite">
+
+                    <EditText
+                        android:id="@+id/passwordEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/login_hint_password"
+                        android:inputType="textPassword"
+                        android:textColor="#818181"
+                        android:textColorHint="#818181"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginLeft="16dp"
+                        android:textSize="12dp" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/forgotButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/relativeLayout"
+                    android:layout_gravity="end"
+                    android:textStyle="bold"
+                    android:text="@string/login.button.forgot"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="OR"
+                    android:textAlignment="center"
+                    android:textColor="@color/green_color"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/facebook_login"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/social_media_button"
+                    android:drawableLeft="@drawable/facebook_logo"
+                    android:text="@string/facebook_login"
+                    android:textColor="@color/green_color"
+                    android:textSize="13dp" />
+
+                <Button
+                    android:id="@+id/google_login"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/social_media_button"
+                    android:drawableLeft="@drawable/ggoogle"
+                    android:text="@string/google_login"
+                    android:textColor="@color/green_color"
+                    android:textSize="13dp" />
+
+                <ImageButton
+                    android:id="@+id/next1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="40dp"
+                    android:background="@color/background_color"
+                    android:src="@drawable/next" />
+                <ImageButton
+                    android:id="@+id/next2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="40dp"
+                    android:visibility="gone"
+                    android:background="@color/background_color"
+                    android:src="@drawable/next" />
+            </LinearLayout>
+        </RelativeLayout>
+    </ScrollView>
+
+</RelativeLayout>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.uberclone.whereyou.Activities.CreatGroup">
+
+    <include
+        android:id="@+id/creatGroup"
+        layout="@layout/app_bar_layout"></include>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/creatGroup">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/channel_image"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:src="@drawable/image" />
+
+            <TextView
+                android:id="@+id/btn_upload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="0dp"
+                android:text="Upload Image"
+                android:textColor="#979797"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/et_channelname"
+                android:layout_width="335dp"
+                android:layout_height="50dp"
+                android:layout_margin="3dp"
+                android:background="@drawable/edit_bg"
+                android:layout_centerHorizontal="true"
+                android:editable="false"
+                android:gravity="left|center"
+                android:hint="Add Title"
+                android:inputType="text"
+                android:padding="13dp"
+                android:textColor="#979797"
+                android:textSize="15sp" />
+
+            <EditText
+                android:id="@+id/tv_bio"
+                android:layout_width="335dp"
+                android:layout_height="130dp"
+                android:layout_margin="3dp"
+                android:background="@drawable/edit_bg"
+                android:cursorVisible="true"
+                android:focusable="true"
+                android:layout_centerHorizontal="true"
+                android:gravity="top|left|center"
+                android:hint="Description / Bio"
+                android:inputType="textMultiLine"
+                android:padding="13dp"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/btn_createchannel"
+                android:layout_width="270dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_margin="30dp"
+                android:background="@drawable/button_background"
+                android:padding="10dp"
+                android:text="Create Group"
+                android:textSize="15sp"
+                android:textColor="@color/colorWhite"/>
+        </LinearLayout>
+
+    </ScrollView>
+</RelativeLayout>
+
