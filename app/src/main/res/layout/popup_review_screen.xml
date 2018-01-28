@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/a"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_dialoge"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
+        <TextView
+            android:id="@+id/location_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:paddingLeft="15dp"
+            android:textColor="@color/colorWhite"
+            android:text="Location Country Name"/>
+        <TextView
+            android:id="@+id/location_city_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:paddingLeft="15dp"
+            android:textColor="@color/colorWhite"
+            android:text="Location City Name"/>
+    </LinearLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ratingLayout"
+        android:layout_below="@id/a"
+        android:orientation="vertical">
+        <me.zhanghai.android.materialratingbar.MaterialRatingBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:rating="0"
+            android:id="@+id/rating"
+            android:padding="10dp"
+            android:layout_centerHorizontal="true"
+            app:mrb_secondaryProgressTint="@color/background_color"
+            app:mrb_progressTint="@color/background_color"
+            style="@style/Widget.MaterialRatingBar.RatingBar" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ratingLayout"
+        android:id="@+id/edt_comment">
+        <EditText
+            android:id="@+id/tv_comment"
+            android:layout_width="290dp"
+            android:layout_height="98dp"
+            android:background="@drawable/edit_bg"
+            android:cursorVisible="true"
+            android:focusable="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_centerHorizontal="true"
+            android:gravity="top|left|center"
+            android:hint="Add Comment"
+            android:inputType="textMultiLine"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="16sp" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/edt_comment">
+        <Button
+            android:id="@+id/btn_submit"
+            android:layout_width="135dp"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:layout_margin="20dp"
+            android:layout_centerHorizontal="true"
+            android:text="Submit"
+            android:textColor="@color/popup_color"
+            android:background="@drawable/popup_button"/>
+    </RelativeLayout>
+</RelativeLayout>
