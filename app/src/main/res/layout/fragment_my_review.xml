@@ -1,13 +1,17 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.uberclone.whereyou.Fragments.MyReview">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/mychannels"
+        android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Reviews" />
+        android:layout_margin="5dp"
+        android:adjustViewBounds="true"
+        android:descendantFocusability="blocksDescendants" />
 
-</FrameLayout>
+</RelativeLayout>

@@ -2,13 +2,14 @@ package com.uberclone.whereyou;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
+import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,17 +27,20 @@ import com.uberclone.whereyou.Fragments.Settings;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class MainActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener{
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private FirebaseAuth mAuth;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mUserRef;
     private String mCurrentUser;
+    private android.support.v4.app.FragmentManager fragmentManager;
+
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
 
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,7 +49,7 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -58,7 +62,12 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
 
         //init Firebase
         mAuth = FirebaseAuth.getInstance();
+        fragmentManager = getSupportFragmentManager();
+        //selectItem(R.id.nav_home);
+        fragmentManager.beginTransaction().replace(R.id.content_frame, new Home()).commit();
+
     }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -97,38 +106,53 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        android.support.v4.app.FragmentManager fragmentManager=getSupportFragmentManager();
-        if (id == R.id.nav_home) {
-            // Handle the camera action
-            fragmentManager.beginTransaction().replace(R.id.content_frame,new Home()).commit();
-        } else if (id == R.id.nav_groups) {
-            fragmentManager.beginTransaction().replace(R.id.content_frame,new Groups()).commit();
-        } else if (id == R.id.nav_reviews) {
-            fragmentManager.beginTransaction().replace(R.id.content_frame,new MyReview()).commit();
-        } else if (id == R.id.nav_settings) {
-            fragmentManager.beginTransaction().replace(R.id.content_frame,new Settings()).commit();
-        }
+        selectItem(id);
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        FirebaseUser mUser = mAuth.getCurrentUser();
-        if (mUser == null) {
-            sendToStart();
-
-        } else {
-
+    private void selectItem(int id) {
+        Fragment fragment = null;
+        if (id == R.id.nav_home) {
+            getSupportActionBar().setTitle("WHERE YOU");
+            //fragment = new Home();
+           // getSupportActionBar().setIcon(R.drawable.whereyou);
+            fragmentManager.beginTransaction().replace(R.id.content_frame, new Home()).commit();
+        } else if (id == R.id.nav_groups) {
+            getSupportActionBar().setTitle("GROUPS");
+            // fragmentManager.beginTransaction().replace(R.id.content_frame, new Groups()).commit();
+            fragment = new Groups();
+        } else if (id == R.id.nav_reviews) {
+            getSupportActionBar().setTitle("MY REVIEWS");
+            fragment = new MyReview();
+            //fragmentManager.beginTransaction().replace(R.id.content_frame, new MyReview()).commit();
+        } else if (id == R.id.nav_settings) {
+            getSupportActionBar().setTitle("SETTINGS");
+            fragment = new Settings();
+            //fragmentManager.beginTransaction().replace(R.id.content_frame, new Settings()).commit();
         }
+        if (fragment != null) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.content_frame, fragment);
+            ft.commit();
+        }
+
     }
 
     private void sendToStart() {
         Intent startIntent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(startIntent);
         finish();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (FirebaseAuth.getInstance().getCurrentUser()==null){
+            sendToStart();
+        }
     }
 }

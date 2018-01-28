@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="250dp"
-    android:layout_height="120dp">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardElevation="10dp">
 
     <LinearLayout
         android:orientation="vertical"
         android:id="@+id/a"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/background_dialoge"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -32,23 +34,53 @@
             android:text="Location City Name"/>
     </LinearLayout>
     <LinearLayout
-        android:layout_below="@+id/a"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:weightSum="6"
+        android:weightSum="4"
+        android:padding="10dp"
+        android:layout_below="@id/a"
         android:orientation="horizontal">
-        <ImageView
-            android:layout_width="135dp"
-            android:layout_height="32dp"
-            android:layout_weight="3"
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="Review Location"
+            android:textSize="13sp"
+            android:layout_marginRight="4dp"
+            android:textColor="@color/popup_color"
             android:id="@+id/btn_review_location"
-            android:src="@drawable/review_loc"/>
-        <ImageView
+            android:background="@drawable/popup_button"/>
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="Review Location"
+            android:textSize="13sp"
+            android:layout_marginRight="4dp"
+            android:textColor="@color/disable_color"
+            android:visibility="gone"
+            android:id="@+id/btn_review_location_disable"
+            android:background="@drawable/popup_disable_button"/>
+        <Button
             android:id="@+id/btn_see_existing"
-            android:layout_width="135dp"
-            android:layout_height="32dp"
-            android:layout_weight="3"
-            android:src="@drawable/see_existing"/>
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:layout_marginLeft="4dp"
+            android:visibility="gone"
+            android:textSize="13sp"
+            android:text="See Existing"
+            android:textColor="@color/popup_color"
+            android:background="@drawable/popup_button"/>
+        <Button
+            android:id="@+id/btn_see_existing_disable"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:layout_marginLeft="4dp"
+            android:textSize="13sp"
+            android:text="See Existing"
+            android:textColor="@color/disable_color"
+            android:background="@drawable/popup_disable_button"/>
     </LinearLayout>
 </RelativeLayout>

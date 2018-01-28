@@ -8,4 +8,6 @@
     <color name="rippleeffectcolor">#f816a463</color>
     <color name="press_login_signup">#C0C0C0</color>
     <color name="colorWhite">#ffffff</color>
+    <color name="popup_color">#808080</color>
+    <color name="disable_color">#D5D5D5</color>
 </resources>
