@@ -76,7 +76,7 @@ import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
+public class Home extends android.support.v4.app.Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
@@ -127,12 +127,6 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         } catch (InflateException e) {
         }
 
-        FragmentManager manager = getFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        SupportMapFragment fragment = new SupportMapFragment();
-        transaction.add(R.id.map, fragment);
-        transaction.commit();
-
 
         //Init Firebase
         mAuth = FirebaseAuth.getInstance();
@@ -147,43 +141,10 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
         mAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mAuth.getCurrentUser();
 
-
         //init Waitng SpotProgress
         waitingdialog = new SpotsDialog(getContext());
-
-        fragment.getMapAsync(this);
-        setUpLocation();
-        autocompleteFragment = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
-                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_NONE)
-                .build();
-        autocompleteFragment.setFilter(typeFilter);
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                LatLng latLng = place.getLatLng();
-                String locationName = place.getName().toString();
-                stopLocationUpdates();
-                GetReview(latLng.latitude, latLng.longitude);
-            }
-
-            @Override
-            public void onError(Status status) {
-                // TODO: Handle the error.
-            }
-        });
-        autocompleteFragment.setHint("Search here");
-
         return mView;
     }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        SupportMapFragment fragment=(SupportMapFragment)getChildFragmentManager().findFragmentById(R.id.map);
-        fragment.getMapAsync(this);
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
@@ -298,9 +259,29 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                 }
             }
         });
+        setUpLocation();
+        autocompleteFragment = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
+                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_NONE)
+                .build();
+        autocompleteFragment.setFilter(typeFilter);
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                LatLng latLng = place.getLatLng();
+                String locationName = place.getName().toString();
+                stopLocationUpdates();
+                GetReview(latLng.latitude, latLng.longitude);
+            }
+
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+            }
+        });
+        autocompleteFragment.setHint("Search here");
 
     }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -576,7 +557,7 @@ public class Home extends Fragment implements OnMapReadyCallback, GoogleApiClien
                                                 b.dismiss();
                                                 String id = String.valueOf(marker.getTag());
                                                 Intent newIntent = new Intent(getContext(), ChatActivity.class);
-                                                newIntent.putExtra("user_id", id);
+                                                newIntent.putExtra("from_user_id", id);
                                                 startActivity(newIntent);
 
                                             }

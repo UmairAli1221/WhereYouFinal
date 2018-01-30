@@ -64,7 +64,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mAuth = FirebaseAuth.getInstance();
         fragmentManager = getSupportFragmentManager();
         //selectItem(R.id.nav_home);
-        fragmentManager.beginTransaction().replace(R.id.content_frame, new Home()).commit();
+        //Fragment fragment = new Home();
+       // fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
 
     }
 
@@ -106,7 +107,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        selectItem(id);
+        //selectItem(id);
+        Fragment fragment = null;
+        if (id == R.id.nav_home) {
+            //getSupportActionBar().setTitle("WHERE YOU");
+            fragment = new Home();
+            //getSupportActionBar().setIcon(R.drawable.whereyou);
+            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+        } else if (id == R.id.nav_groups) {
+           // getSupportActionBar().setTitle("GROUPS");
+            fragment = new Groups();
+             fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+            //
+        } else if (id == R.id.nav_reviews) {
+            getSupportActionBar().setTitle("MY REVIEWS");
+            fragment = new MyReview();
+            fragmentManager.beginTransaction().replace(R.id.content_frame,fragment).commit();
+        } else if (id == R.id.nav_settings) {
+            getSupportActionBar().setTitle("SETTINGS");
+            fragment = new Settings();
+            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+        }
+       /* if (fragment != null) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.content_frame, fragment);
+            ft.commit();
+        }*/
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -115,30 +141,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void selectItem(int id) {
-        Fragment fragment = null;
-        if (id == R.id.nav_home) {
-            getSupportActionBar().setTitle("WHERE YOU");
-            //fragment = new Home();
-           // getSupportActionBar().setIcon(R.drawable.whereyou);
-            fragmentManager.beginTransaction().replace(R.id.content_frame, new Home()).commit();
-        } else if (id == R.id.nav_groups) {
-            getSupportActionBar().setTitle("GROUPS");
-            // fragmentManager.beginTransaction().replace(R.id.content_frame, new Groups()).commit();
-            fragment = new Groups();
-        } else if (id == R.id.nav_reviews) {
-            getSupportActionBar().setTitle("MY REVIEWS");
-            fragment = new MyReview();
-            //fragmentManager.beginTransaction().replace(R.id.content_frame, new MyReview()).commit();
-        } else if (id == R.id.nav_settings) {
-            getSupportActionBar().setTitle("SETTINGS");
-            fragment = new Settings();
-            //fragmentManager.beginTransaction().replace(R.id.content_frame, new Settings()).commit();
-        }
-        if (fragment != null) {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.content_frame, fragment);
-            ft.commit();
-        }
+
 
     }
 

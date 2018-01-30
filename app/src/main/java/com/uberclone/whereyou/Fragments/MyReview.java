@@ -106,7 +106,7 @@ public class MyReview extends Fragment {
                                 @Override
                                 public void onClick(View v) {
                                     Intent newIntent = new Intent(getContext(), ChatActivity.class);
-                                    newIntent.putExtra("user_id", user_id);
+                                    newIntent.putExtra("from_user_id", user_id);
                                     startActivity(newIntent);
                                 }
                             });
