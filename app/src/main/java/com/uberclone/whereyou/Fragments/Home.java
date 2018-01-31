@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -127,6 +128,35 @@ public class Home extends android.support.v4.app.Fragment implements OnMapReadyC
         } catch (InflateException e) {
         }
 
+        //these steps are cumplosory otherwise map will not initialize!
+        FragmentManager manager = getFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        SupportMapFragment fragment = new SupportMapFragment();
+        transaction.add(R.id.map, fragment);
+        transaction.commit();
+
+        fragment.getMapAsync(this);
+        autocompleteFragment = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
+                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_NONE)
+                .build();
+        autocompleteFragment.setFilter(typeFilter);
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                LatLng latLng = place.getLatLng();
+                String locationName = place.getName().toString();
+                stopLocationUpdates();
+                GetReview(latLng.latitude, latLng.longitude);
+            }
+
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+            }
+        });
+        autocompleteFragment.setHint("Search here");
+
 
         //Init Firebase
         mAuth = FirebaseAuth.getInstance();
@@ -143,6 +173,7 @@ public class Home extends android.support.v4.app.Fragment implements OnMapReadyC
 
         //init Waitng SpotProgress
         waitingdialog = new SpotsDialog(getContext());
+        setUpLocation();
         return mView;
     }
     @Override
@@ -259,27 +290,7 @@ public class Home extends android.support.v4.app.Fragment implements OnMapReadyC
                 }
             }
         });
-        setUpLocation();
-        autocompleteFragment = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
-                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_NONE)
-                .build();
-        autocompleteFragment.setFilter(typeFilter);
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                LatLng latLng = place.getLatLng();
-                String locationName = place.getName().toString();
-                stopLocationUpdates();
-                GetReview(latLng.latitude, latLng.longitude);
-            }
 
-            @Override
-            public void onError(Status status) {
-                // TODO: Handle the error.
-            }
-        });
-        autocompleteFragment.setHint("Search here");
 
     }
     @Override

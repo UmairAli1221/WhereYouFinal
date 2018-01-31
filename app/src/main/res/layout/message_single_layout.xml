@@ -46,7 +46,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/left_img"
-                        android:src="@drawable/image2"
+                        android:src="@drawable/ic_image_container"
                         android:adjustViewBounds="true"
                         android:maxHeight="480dp" />
 

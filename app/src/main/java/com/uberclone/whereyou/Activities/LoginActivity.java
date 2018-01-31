@@ -203,7 +203,7 @@ public class LoginActivity extends AppCompatActivity {
                                 String device_token = FirebaseInstanceId.getInstance().getToken();
                                 mFirebasedatabase.child("Users").child(mUserID).child("device_token").setValue(device_token);
                                 mFirebasedatabase.child("Users").child(mUserID).child("Uid").setValue(mUserID);
-                                mFirebasedatabase.child("Users").child(mUserID).child("username").setValue(mUsername);
+                                mFirebasedatabase.child("Users").child(mUserID).child("name").setValue(mUsername);
                                 mFirebasedatabase.child("Users").child(mUserID).child("email").setValue(mEmail);
                                 waitingdialog.dismiss();
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);

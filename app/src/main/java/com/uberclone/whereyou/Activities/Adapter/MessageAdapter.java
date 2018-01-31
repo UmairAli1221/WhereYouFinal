@@ -90,20 +90,23 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
                     String name = dataSnapshot.child("name").getValue().toString();
                     viewHolder.messangerName.setText(name);
-                    final String image = dataSnapshot.child("profile_image").getValue().toString();
 
-                    Picasso.with(viewHolder.profileImage.getContext()).load(image)
-                            .placeholder(R.drawable.image).into(viewHolder.profileImage, new Callback() {
-                        @Override
-                        public void onSuccess() {
+                    if (dataSnapshot.hasChild("profile_image")){
+                        final String image = dataSnapshot.child("profile_image").getValue().toString();
+                        Picasso.with(viewHolder.profileImage.getContext()).load(image)
+                                .placeholder(R.drawable.ic_image_container).into(viewHolder.profileImage, new Callback() {
+                            @Override
+                            public void onSuccess() {
 
-                        }
+                            }
 
-                        @Override
-                        public void onError() {
-                            Picasso.with(viewHolder.profileImage.getContext()).load(R.drawable.image).into(viewHolder.profileImage);
-                        }
-                    });
+                            @Override
+                            public void onError() {
+                                Picasso.with(viewHolder.profileImage.getContext()).load(R.drawable.image).into(viewHolder.profileImage);
+                            }
+                        });
+                    }
+
 
                 }
 
@@ -120,21 +123,23 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
                     String name = dataSnapshot.child("name").getValue().toString();
                     viewHolder.messangerName.setText(name);
-                    final String image = dataSnapshot.child("profile_image").getValue().toString();
+                    if (dataSnapshot.hasChild("profile_image")){
+                        final String image = dataSnapshot.child("profile_image").getValue().toString();
 
 
-                    Picasso.with(viewHolder.profileImage.getContext()).load(image)
-                            .placeholder(R.drawable.image).into(viewHolder.profileImage, new Callback() {
-                        @Override
-                        public void onSuccess() {
+                        Picasso.with(viewHolder.profileImage.getContext()).load(image)
+                                .placeholder(R.drawable.ic_image_container).into(viewHolder.profileImage, new Callback() {
+                            @Override
+                            public void onSuccess() {
 
-                        }
+                            }
 
-                        @Override
-                        public void onError() {
-                            Picasso.with(viewHolder.profileImage.getContext()).load(R.drawable.image).into(viewHolder.profileImage);
-                        }
-                    });
+                            @Override
+                            public void onError() {
+                                Picasso.with(viewHolder.profileImage.getContext()).load(R.drawable.image).into(viewHolder.profileImage);
+                            }
+                        });
+                    }
                 }
 
                 @Override

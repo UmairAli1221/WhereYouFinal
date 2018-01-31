@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -27,7 +28,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -39,6 +42,7 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.uberclone.whereyou.Activities.Adapter.MessageAdapter;
 import com.uberclone.whereyou.Model.Messages;
 import com.uberclone.whereyou.R;
@@ -76,7 +80,7 @@ public class ChatActivity extends AppCompatActivity {
     private final List<Messages> messagesList = new ArrayList<>();
     private LinearLayoutManager mLinearLayout;
     private MessageAdapter mAdapter;
-    private DatabaseReference mUserRef;
+    private DatabaseReference mUserRef,mMembersDatabase;
     private FirebaseAuth mAuth;
     private static final int TOTAL_ITEMS_TO_LOAD = 10;
     private int mCurrentPage = 1;
@@ -98,6 +102,7 @@ public class ChatActivity extends AppCompatActivity {
     private DatabaseReference mNotificationDatabase;
     ImageView  mAddImg, mEmojiBtn, mDeleteImg, mPreviewImg;
     TextView mSendMessage;
+    String rewiveCreater;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,6 +122,8 @@ public class ChatActivity extends AppCompatActivity {
         mChatUser = getIntent().getStringExtra("from_user_id");
         mNotificationDatabase=FirebaseDatabase.getInstance().getReference().child("ReviewNotifications");
         imageStorage = FirebaseStorage.getInstance().getReference();
+        mMembersDatabase = FirebaseDatabase.getInstance().getReference().child("Reviews").child(mChatUser).child("group_members");
+        mMembersDatabase.keepSynced(true);
 
         //Inflate Chat App Bar
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -224,10 +231,11 @@ public class ChatActivity extends AppCompatActivity {
         mRootRef.child("Reviews").child(mChatUser).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild("reviewname")){
+                if (dataSnapshot.hasChild("reviewname")&& dataSnapshot.hasChild("uid_created_by")){
                     String groupName = dataSnapshot.child("reviewname").getValue().toString();
                     userName=groupName;
                     mGroupTitle.setText(groupName);
+                    rewiveCreater=dataSnapshot.child("uid_created_by").getValue().toString();
                 }else {
                     finish();
                 }
@@ -249,15 +257,10 @@ public class ChatActivity extends AppCompatActivity {
                 boolean result = Utility.checkPermission(ChatActivity.this);
                 if (options[item].equals("Take Photo")) {
                     if (true) {
-                        try {
-                            Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            startActivityForResult(takePicture, 0);
+                        Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(takePicture, 0);
 
-                        } catch (ActivityNotFoundException anfe) {
-                            //display an error message
-                            String errorMessage = "Whoops - your device doesn't support capturing images!";
-                            Toast.makeText(ChatActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-                        }
+
                     }
                 } else if (options[item].equals("Choose from Gallery")) {
                     if (true) {
@@ -274,35 +277,94 @@ public class ChatActivity extends AppCompatActivity {
         builder.show();
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            //user is returning from capturing an image using the camera
-            if (requestCode == CAMERA_CAPTURE) {
-                //get the Uri for the captured image
-                Uri uri = picUri;
-                //carry out the crop operation
-                performCrop();
-                // Log.d("picUri", uri.toString());
+    protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+        switch(requestCode) {
+            case 0:
+                if(resultCode == RESULT_OK){
+                    Uri selectedImage = imageReturnedIntent.getData();
+                    sendImageMessage(selectedImage);
+                }
 
-            } else if (requestCode == PICK_IMAGE_REQUEST) {
-                picUri = data.getData();
-                Log.d("uriGallery", picUri.toString());
-                performCrop();
-            }
-
-            //user is returning from cropping the image
-            else if (requestCode == PIC_CROP) {
-                //get the returned data
-                Bundle extras = data.getExtras();
-                //get the cropped bitmap
-                Bitmap thePic = (Bitmap) extras.get("data");
-                //display the returned cropped image
-                mContainerImg.setVisibility(View.VISIBLE);
-                mPreviewImg.setImageBitmap(thePic);
-
-            }
-
+                break;
+            case 1:
+                if(resultCode == RESULT_OK){
+                    Uri selectedImage = imageReturnedIntent.getData();
+                    sendImageMessage(selectedImage);
+                }
+                break;
         }
+    }
+
+
+    private void sendImageMessage(Uri uri) {
+        final String current_user_ref = "Reviews/"+ mChatUser+"/messages";
+       // final String chat_user_ref = "Chat/" + mChatUser + "/" + mCurrentUserId + "/messages";
+
+        DatabaseReference user_message_push = mRootRef.child("Reviews").child(mChatUser).child("messages").push();
+
+        final String push_id = user_message_push.getKey();
+
+        final StorageReference filapath = imageStorage.child("message_images").child(push_id + ".jpg");
+        filapath.putFile(uri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                if (task.isSuccessful()) {
+                    filapath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(final Uri uri) {
+                            Map messageMap = new HashMap();
+                            messageMap.put("message", uri.toString());
+                            messageMap.put("seen", false);
+                            messageMap.put("type", "image");
+                            messageMap.put("time", ServerValue.TIMESTAMP);
+                            messageMap.put("from", mCurrentUserId);
+
+                            Map messageUserMap = new HashMap();
+                            messageUserMap.put(current_user_ref + "/" + push_id, messageMap);
+                           // messageUserMap.put(chat_user_ref + "/" + push_id, messageMap);
+
+                           // mChatMessageView.setText("");
+
+                            mRootRef.updateChildren(messageUserMap, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+
+                                    if (databaseError != null) {
+
+                                        Log.d("CHAT_LOG", databaseError.getMessage().toString());
+                                      //  mprogressDialog2.dismiss();
+                                        Toast.makeText(ChatActivity.this, "Message Not Sent..", Toast.LENGTH_SHORT).show();
+
+                                    } else {
+                                        mRootRef.child("Reviews").child(mChatUser).child("last_message").setValue("Photo!");
+                                        mRootRef.child("Reviews").child(mChatUser).child("last_message_time").setValue(ServerValue.TIMESTAMP);
+                                        mRootRef.child("Reviews").child(mChatUser).child("name").setValue(userName);
+                                        final Map notification = new HashMap<>();
+                                        notification.put("from", mCurrentUserId);
+                                        notification.put("type", "Single_message");
+                                        notification.put("message", "Photo!");
+                                        mNotificationDatabase.child(rewiveCreater).push().setValue(notification).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d("CHAT_LOG", "Done");
+                                                //  mprogressDialog2.dismiss();
+
+                                            }
+                                        });
+                                    }
+
+                                }
+                            });
+
+                        }
+                    });
+                } else {
+                   // mprogressDialog2.dismiss();
+                    Toast.makeText(ChatActivity.this, "Error In Uploading Image", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private void performCrop() {
@@ -419,7 +481,7 @@ public class ChatActivity extends AppCompatActivity {
 
                     }else {
                         mRootRef.child("Reviews").child(mChatUser).child("last_message").setValue(message);
-
+                        mRootRef.child("Reviews").child(mChatUser).child("name").setValue(userName);
                         mRootRef.child("Reviews").child(mChatUser).child("last_message_time").setValue(ServerValue.TIMESTAMP);
                         final Map notification = new HashMap<>();
                         notification.put("from",mCurrentUserId );
@@ -433,7 +495,6 @@ public class ChatActivity extends AppCompatActivity {
                             }
                         });
                     }
-
                 }
             });
 
