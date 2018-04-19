@@ -1,7 +1,6 @@
 package com.uberclone.whereyou.Fragments;
 
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -19,6 +19,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.uberclone.whereyou.Activities.ChatActivity;
 import com.uberclone.whereyou.Model.Review;
@@ -31,8 +32,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.StringTokenizer;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -57,6 +56,8 @@ public class MyReview extends Fragment {
         View mychannels = inflater.inflate(R.layout.fragment_my_review, container, false);
         mMyChannels = (RecyclerView) mychannels.findViewById(R.id.mychannels);
         mLayoutManager = new LinearLayoutManager(getContext());
+        mLayoutManager.setReverseLayout(true);
+        mLayoutManager.setStackFromEnd(true);
         mMyChannels.setHasFixedSize(true);
         mMyChannels.setLayoutManager(mLayoutManager);
 
@@ -64,7 +65,7 @@ public class MyReview extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         mCurrentUser = mAuth.getCurrentUser().getUid();
         UserDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(mCurrentUser);
-        UsersDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(mCurrentUser).child("Reviews");
+        UsersDatabase = FirebaseDatabase.getInstance().getReference().child("Reviews");
         UsersDatabase.keepSynced(true);
         mRootRef = FirebaseDatabase.getInstance().getReference();
         mRootRef.keepSynced(true);
@@ -74,12 +75,14 @@ public class MyReview extends Fragment {
     @Override
     public void onStart() {
         UserDatabase.child("online").setValue("true");
+        Query query=UsersDatabase.orderByChild("uid_created_by").equalTo(mCurrentUser);
+//        Toast.makeText(getContext(), "Error In Uploading Image"+query, Toast.LENGTH_SHORT).show();
         super.onStart();
         FirebaseRecyclerAdapter<Review, AllGroupsViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Review, AllGroupsViewHolder>(
                 Review.class,
                 R.layout.single_review_item,
                 AllGroupsViewHolder.class,
-                UsersDatabase
+                query
         ) {
             @Override
             protected void populateViewHolder(final AllGroupsViewHolder viewHolder, Review model, int position) {
@@ -106,7 +109,7 @@ public class MyReview extends Fragment {
                                 @Override
                                 public void onClick(View v) {
                                     Intent newIntent = new Intent(getContext(), ChatActivity.class);
-                                    newIntent.putExtra("from_user_id", user_id);
+                                    newIntent.putExtra("from_group_id", user_id);
                                     startActivity(newIntent);
                                 }
                             });

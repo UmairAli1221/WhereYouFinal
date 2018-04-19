@@ -8,13 +8,13 @@ import java.util.Map;
 
 public class Review {
     private String rates, comments, uid_created_by, review_id, reviewname;
-    private Map created_time;
+    private long created_time;
     private double lat, lng;
 
     public Review() {
     }
 
-    public Review(String rates, String comments, String uid_created_by, String review_id, String reviewname, Map created_time, double lat, double lng) {
+    public Review(String rates, String comments, String uid_created_by, String review_id, String reviewname, Long created_time, double lat, double lng) {
         this.rates = rates;
         this.comments = comments;
         this.uid_created_by = uid_created_by;
@@ -65,11 +65,11 @@ public class Review {
         this.reviewname = reviewname;
     }
 
-    public Map getCreated_time() {
+    public long getCreated_time() {
         return created_time;
     }
 
-    public void setCreated_time(Map created_time) {
+    public void setCreated_time(long created_time) {
         this.created_time = created_time;
     }
 

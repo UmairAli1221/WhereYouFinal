@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -15,7 +14,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.uberclone.whereyou.Activities.LoginActivity;
@@ -34,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DatabaseReference mUserRef;
     private String mCurrentUser;
     private android.support.v4.app.FragmentManager fragmentManager;
+    int count = 0;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -45,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //import Custome Font!
-        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder().setDefaultFontPath("fonts/Poppins-Regular.ttf").setFontAttrId(R.attr.fontPath).build());
+        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder().setDefaultFontPath("fonts/Roboto-Regular.ttf").setFontAttrId(R.attr.fontPath).build());
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -65,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentManager = getSupportFragmentManager();
         //selectItem(R.id.nav_home);
         Fragment fragment = new Home();
-        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+        fragmentManager.beginTransaction().add(R.id.content_frame, fragment).commit();
 
     }
 
@@ -74,8 +73,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else if (fragmentManager.getBackStackEntryCount() != 0) {
+//                getSupportFragmentManager().popBackStackImmediate();
+            startActivity(new Intent(MainActivity.this, MainActivity.class));
+
+//        } else if (fragmentManager.findFragmentByTag("tagR") != null) {
+////                getSupportFragmentManager().popBackStackImmediate();
+//            startActivity(new Intent(MainActivity.this, MainActivity.class));
+//
+        } else if (fragmentManager.getBackStackEntryCount() == 0) {
+            finish();
+
         } else {
-            super.onBackPressed();
+            finish();
         }
     }
 
@@ -109,23 +119,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
         //selectItem(id);
         if (id == R.id.nav_home) {
-            //getSupportActionBar().setTitle("WHERE YOU");
-            Fragment fragment = new Home();
-            //getSupportActionBar().setIcon(R.drawable.whereyou);
-            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+//            for(Fragment fragment:getSupportFragmentManager().getFragments()){
+//                getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+//                getSupportActionBar().setTitle("WHERE YOU");
+//
+//            }
+//            Fragment fragment = new Home();
+//            //getSupportActionBar().setIcon(R.drawable.whereyou);
+//            fragmentManager.beginTransaction().add(R.id.content_frame, fragment).addToBackStack("tagM").commit();
+            startActivity(new Intent(MainActivity.this, MainActivity.class));
         } else if (id == R.id.nav_groups) {
-           // getSupportActionBar().setTitle("GROUPS");
+            getSupportActionBar().setTitle("GROUPS");
             Fragment fragment = new Groups();
-             fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("tag").commit();
             //
         } else if (id == R.id.nav_reviews) {
             getSupportActionBar().setTitle("MY REVIEWS");
             Fragment fragment = new MyReview();
-            fragmentManager.beginTransaction().replace(R.id.content_frame,fragment).commit();
+            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("tag").commit();
         } else if (id == R.id.nav_settings) {
             getSupportActionBar().setTitle("SETTINGS");
             Fragment fragment = new Settings();
-            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack("tag").commit();
         }
        /* if (fragment != null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -153,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         super.onStart();
-        if (FirebaseAuth.getInstance().getCurrentUser()==null){
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             sendToStart();
         }
     }

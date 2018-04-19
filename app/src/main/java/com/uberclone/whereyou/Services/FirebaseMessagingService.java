@@ -21,6 +21,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         String notification_body=remoteMessage.getNotification().getBody();
         String click_action=remoteMessage.getNotification().getClickAction();
         String from_user_id=remoteMessage.getData().get("from_user_id");
+        String from_group_id=remoteMessage.getData().get("from_group_id");
 
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder mBuilder=new NotificationCompat.Builder(this).setSmallIcon(R.drawable.whereyou)
@@ -30,7 +31,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 .setSound(defaultSoundUri).setAutoCancel(true);
 
         Intent resultIntent=new Intent(click_action);
-        resultIntent.putExtra("from_user_id",from_user_id);
+        resultIntent.putExtra("from_group_id",from_group_id);
 
         PendingIntent resultPendingIntent=PendingIntent.getActivity(this,0,resultIntent,PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(resultPendingIntent);

@@ -17,8 +17,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICEs" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:name=".Services.OffilineCapability"
@@ -29,16 +29,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <uses-library android:name="com.google.android.maps" />
+
         <service android:name=".Services.FirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
-
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".MainActivity" />
         <activity android:name=".Activities.LoginActivity" />
         <activity android:name=".Activities.CreatGroup" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
@@ -50,13 +51,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.ChatActivity">
+        <activity
+            android:name=".Activities.ChatActivity">
             <intent-filter>
                 <action android:name="com.example.umairali.TARGET_GROUP" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name=".Activities.ImageViewerActivity" />
     </application>
 
 </manifest>

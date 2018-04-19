@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:emojicon="http://schemas.android.com/tools"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:weightSum="10">
 
 
@@ -33,24 +34,48 @@
 
             <LinearLayout
                 android:orientation="horizontal"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="match_parent"
+                    android:layout_gravity="left"
                     android:layout_height="wrap_content">
+                    <RelativeLayout
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"
+                        android:id="@+id/imageLayout">
 
-                    <com.uberclone.whereyou.Util.ResizableImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/left_img"
-                        android:src="@drawable/ic_image_container"
-                        android:adjustViewBounds="true"
-                        android:maxHeight="480dp" />
+                        <ImageView
+                            android:id="@+id/image"
+                            android:layout_width="200dp"
+                            android:layout_height="200dp"
+                            android:scaleType="centerCrop"
+                            android:background="@drawable/caht_left_item"
+                            android:layout_alignParentTop="true"
+                            android:src="@drawable/ic_image_container" />
 
-                    <hani.momanii.supernova_emoji_library.Helper.EmojiconTextView
+                        <ImageView
+                            android:id="@+id/ImagePlay"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_centerInParent="true"
+                            android:layout_gravity="center"
+                            android:scaleType="centerCrop"
+                            android:visibility="gone"
+                            android:src="@drawable/download_recording" />
+
+                        <ProgressBar
+                            android:id="@+id/progressBar3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"
+                            android:layout_centerInParent="true" />
+
+                    </RelativeLayout>
+                    <TextView
                         android:id="@+id/left_message"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -103,5 +128,4 @@
                 android:singleLine="true" />
         </LinearLayout>
     </LinearLayout>
-
 </LinearLayout>

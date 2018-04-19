@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 26
@@ -28,6 +29,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:11.0.4'
     implementation 'com.google.firebase:firebase-storage:11.0.4'
     implementation 'com.google.firebase:firebase-messaging:11.0.4'
+    implementation 'com.github.chrisbanes:PhotoView:2.0.0'
     compile 'me.zhanghai.android.materialratingbar:library:1.2.0'
     compile 'com.firebaseui:firebase-ui-database:2.2.0'
     compile 'com.android.support:design:26.1.0'
@@ -45,14 +47,41 @@ dependencies {
     implementation 'com.android.support:cardview-v7:26.1.0'
     //GeoFire
     compile 'com.firebase:geofire-android:2.2.0'
+    //Photoview
+    compile 'com.github.chrisbanes:PhotoView:2.0.0'
     //Picasso
     compile 'com.squareup.picasso:picasso:2.5.2'
     //Http Request
     compile 'com.squareup.okhttp:okhttp:2.5.0'
+    //Glide
+    compile 'com.github.bumptech.glide:glide:3.8.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    compile 'io.reactivex:rxjava:1.0.16'
+    compile 'com.github.esafirm.android-image-picker:imagepicker:1.9.0'
+    annotationProcessor "com.github.hotchemi:permissionsdispatcher-processor:2.4.0"
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    compile("com.github.hotchemi:permissionsdispatcher:2.4.0") {
+        // if you don't use android.app.Fragment you can exclude support for them
+        exclude module: "support-v13"
+    }
 }
+
+
+//Umair,
+//
+//        Some of the points on new version.
+//        1. Camera Picture: The picture quality is bad. The picture size is 10kb. Please take a look and fix this.
+//        2. The back button should go back to home screen and then exit; It directly exits.'
+//        2.1 The back button bug is still there... I have to click back 4 times to remove the dialog box of "See Existing"
+//        3. Clicking the notification should take me to the the new message. Right now it doesn't do that.
+//
+//        Please take care of these three things and we will look into the other things later.
+//
+//        Thank you.
+//        Shahzeb
 
 
 

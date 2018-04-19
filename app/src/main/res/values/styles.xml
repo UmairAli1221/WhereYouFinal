@@ -9,29 +9,14 @@
         <item name="android:windowFullscreen">true</item>
         
     </style>
-    <style name="AppTheme.PopupOverlay." parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowFullscreen">true</item>
-
-    </style>
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-    <style name="MenuItems" parent="AppTheme">
-        <item name="android:textSize">20dp</item>
-        <item name="fontPath">fonts/Poppins-Regular.ttf</item>
-    </style>
+
     <style name="TextAppearance.FontPath" parent="android:TextAppearance">
         <!-- Custom Attr-->
-        <item name="fontPath">fonts/Poppins-Regular.ttf</item>
+        <item name="fontPath">fonts/Roboto-Regular.ttf</item>
     </style>
     <style name="ToolBarStyle">
         <item name="android:textColorPrimary">@android:color/white</item>
@@ -46,6 +31,5 @@
         <item name="fontPath">fonts/New_Waltograph.ttf</item>
         <item name="android:gravity">center</item>
     </style>
-    <dimen name="navigation_icon_size">24dp</dimen>
 
 </resources>

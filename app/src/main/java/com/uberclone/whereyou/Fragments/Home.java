@@ -2,12 +2,16 @@ package com.uberclone.whereyou.Fragments;
 
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,7 +27,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -113,6 +116,7 @@ public class Home extends android.support.v4.app.Fragment implements OnMapReadyC
     Button submit;
     Context context;
     Marker markerTags;
+    Button mSearchBtn;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -126,16 +130,30 @@ public class Home extends android.support.v4.app.Fragment implements OnMapReadyC
             mView = inflater.inflate(R.layout.fragment_home, container, false);
             context = getContext();
         } catch (InflateException e) {
+            Toast.makeText(getContext(), "ReviewID"+e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+//        mView = inflater.inflate(R.layout.fragment_home, container, false);
 
         //these steps are cumplosory otherwise map will not initialize!
-        FragmentManager manager = getFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        SupportMapFragment fragment = new SupportMapFragment();
-        transaction.add(R.id.map, fragment);
-        transaction.commit();
+//        FragmentManager manager = getChildFragmentManager();
+//        FragmentTransaction transaction = manager.beginTransaction();
+//        SupportMapFragment fragment = new SupportMapFragment();
+//        transaction.add(R.id.map, fragment);
+//        transaction.commit();
+//        if (mMap==null){
+//            FragmentManager fm = getChildFragmentManager();
+//            SupportMapFragment  fragment = (SupportMapFragment) fm.findFragmentById(R.id.map);
+//            if (fragment==null){
+//                fragment = new SupportMapFragment();
+//                FragmentTransaction ft = fm.beginTransaction();
+//                ft.add(R.id.map, fragment);
+//                ft.commit();
+//                fm.executePendingTransactions();
+//            }
+        mSearchBtn=(Button)mView.findViewById(R.id.goBtn);
 
-        fragment.getMapAsync(this);
+//            fragment.getMapAsync(this);
+//        }
         autocompleteFragment = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
         AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
                 .setTypeFilter(AutocompleteFilter.TYPE_FILTER_NONE)
@@ -155,7 +173,14 @@ public class Home extends android.support.v4.app.Fragment implements OnMapReadyC
                 // TODO: Handle the error.
             }
         });
-        autocompleteFragment.setHint("Search here");
+        autocompleteFragment.setText("Eiffel Tower");
+        mSearchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                stopLocationUpdates();
+                GetReview(48.8584, 2.2945);
+            }
+        });
 
 
         //Init Firebase
@@ -173,8 +198,54 @@ public class Home extends android.support.v4.app.Fragment implements OnMapReadyC
 
         //init Waitng SpotProgress
         waitingdialog = new SpotsDialog(getContext());
-        setUpLocation();
         return mView;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        FragmentManager fm = getChildFragmentManager();
+        SupportMapFragment mapFragment = (SupportMapFragment) fm.findFragmentById(R.id.map);
+        if (mapFragment == null) {
+            mapFragment = new SupportMapFragment();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.add(R.id.map, mapFragment);
+            ft.commit();
+            fm.executePendingTransactions();
+        }
+        statusCheck();
+        mapFragment.getMapAsync(this);
+        setUpLocation();
+    }
+    public void statusCheck() {
+        final LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            buildAlertMessageNoGps();
+
+        }
+    }
+
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
+        Button nbutton = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
+        nbutton.setTextColor(Color.BLACK);
+        Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
+        pbutton.setTextColor(Color.BLACK);
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -306,130 +377,130 @@ public class Home extends android.support.v4.app.Fragment implements OnMapReadyC
         }
     }
 
-  /*  private void Search(final LatLng location, final String stateName, final String cityName, final String key) {
-        mMap.clear();
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(location)
-                .title(stateName)
-                .snippet("S")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_location));
-
-        markerTags = mMap.addMarker(markerOptions);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15));
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(final Marker marker) {
-                final AlertDialog.Builder dialoge = new AlertDialog.Builder(getContext());
-                final LayoutInflater layoutInflater = LayoutInflater.from(getContext());
-                View popup_layer = layoutInflater.inflate(R.layout.popup, null);
-                tv_location_name = popup_layer.findViewById(R.id.location_name);
-                tv_location_city = popup_layer.findViewById(R.id.location_city_name);
-                iv_review = popup_layer.findViewById(R.id.btn_review_location);
-                iv_existing = popup_layer.findViewById(R.id.btn_see_existing);
-                btn_see_existing_disable = popup_layer.findViewById(R.id.btn_see_existing_disable);
-                final String latstring = String.valueOf(location.latitude);
-                final String longstring = String.valueOf(location.longitude);
-                String lnglatString = latstring + "_" + longstring;
-                mUserRef = FirebaseDatabase.getInstance().getReference().child("ReviewLocations");
-                final GeoFire geoFire = new GeoFire(mUserRef);
-                GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(location.latitude, location.longitude), 100);
-                geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
-                    @Override
-                    public void onKeyEntered(final String key, GeoLocation location) {
-                        iv_existing.setVisibility(View.VISIBLE);
-                        btn_see_existing_disable.setVisibility(View.GONE);
-                        marker.setTag(key);
-                        iv_existing.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Toast.makeText(getContext(), "ReviewID"+markerTags.getTag(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onKeyExited(String key) {
-
-                    }
-
-                    @Override
-                    public void onKeyMoved(String key, GeoLocation location) {
-
-                    }
-
-                    @Override
-                    public void onGeoQueryReady() {
-
-                    }
-
-                    @Override
-                    public void onGeoQueryError(DatabaseError error) {
-
-                    }
-                });
-                // btn_see_existing_disable.setVisibility(View.VISIBLE);
-                //iv_existing.setVisibility(View.GONE);
-                if (key != null) {
-                    iv_existing.setVisibility(View.VISIBLE);
-                    btn_see_existing_disable.setVisibility(View.GONE);
-                    marker.setTag(key);
-                    iv_existing.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Toast.makeText(getContext(), "ReviewID" + key, Toast.LENGTH_SHORT).show();
-                            Intent newIntent = new Intent(getContext(), ChatActivity.class);
-                            newIntent.putExtra("user_id", key);
-                            startActivity(newIntent);
-                        }
-                    });
-                } else {
-                    btn_see_existing_disable.setVisibility(View.VISIBLE);
-                    iv_existing.setVisibility(View.GONE);
-                }
-                tv_location_city.setText(cityName);
-                tv_location_name.setText(stateName);
-                dialoge.setView(popup_layer);
-                final AlertDialog b = dialoge.create();
-                iv_review.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        final AlertDialog.Builder dialoge2 = new AlertDialog.Builder(getContext());
-                        //init view
-                        b.dismiss();
-                        View popu_review_layout = layoutInflater.inflate(R.layout.popup_review_screen, null);
-                        tv_location_name = popu_review_layout.findViewById(R.id.location_name);
-                        tv_location_city = popu_review_layout.findViewById(R.id.location_city_name);
-                        materialRatingBar = popu_review_layout.findViewById(R.id.rating);
-                        comment = popu_review_layout.findViewById(R.id.tv_comment);
-                        submit = popu_review_layout.findViewById(R.id.btn_submit);
-                        //
-                        tv_location_city.setText(cityName);
-                        tv_location_name.setText(stateName);
-                        dialoge2.setView(popu_review_layout);
-                        final AlertDialog b2 = dialoge2.create();
-                        b2.show();
-                        //Event Rating Bar
-                        materialRatingBar.setOnRatingChangeListener(new MaterialRatingBar.OnRatingChangeListener() {
-                            @Override
-                            public void onRatingChanged(MaterialRatingBar ratingBar, float rating) {
-                                ratingStar = rating;
-                            }
-                        });
-                        submit.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                creatReview(mGroup_Id, cityName, location);
-                                b2.dismiss();
-                            }
-                        });
-                    }
-                });
-
-                b.show();
-                return true;
-            }
-        });
-    }*/
+//   private void Search(final LatLng location, final String stateName, final String cityName, final String key) {
+//        mMap.clear();
+//        MarkerOptions markerOptions = new MarkerOptions();
+//        markerOptions.position(location)
+//                .title(stateName)
+//                .snippet("S")
+//                .icon(BitmapDescriptorFactory.fromResource(R.drawable.map_location));
+//
+//        markerTags = mMap.addMarker(markerOptions);
+//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15));
+//        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+//            @Override
+//            public boolean onMarkerClick(final Marker marker) {
+//                final AlertDialog.Builder dialoge = new AlertDialog.Builder(getContext());
+//                final LayoutInflater layoutInflater = LayoutInflater.from(getContext());
+//                View popup_layer = layoutInflater.inflate(R.layout.popup, null);
+//                tv_location_name = popup_layer.findViewById(R.id.location_name);
+//                tv_location_city = popup_layer.findViewById(R.id.location_city_name);
+//                iv_review = popup_layer.findViewById(R.id.btn_review_location);
+//                iv_existing = popup_layer.findViewById(R.id.btn_see_existing);
+//                btn_see_existing_disable = popup_layer.findViewById(R.id.btn_see_existing_disable);
+//                final String latstring = String.valueOf(location.latitude);
+//                final String longstring = String.valueOf(location.longitude);
+//                String lnglatString = latstring + "_" + longstring;
+//                mUserRef = FirebaseDatabase.getInstance().getReference().child("ReviewLocations");
+//                final GeoFire geoFire = new GeoFire(mUserRef);
+//                GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(location.latitude, location.longitude), 100);
+//                geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+//                    @Override
+//                    public void onKeyEntered(final String key, GeoLocation location) {
+//                        iv_existing.setVisibility(View.VISIBLE);
+//                        btn_see_existing_disable.setVisibility(View.GONE);
+//                        marker.setTag(key);
+//                        iv_existing.setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View view) {
+//                                Toast.makeText(getContext(), "ReviewID"+markerTags.getTag(), Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
+//                    }
+//
+//                    @Override
+//                    public void onKeyExited(String key) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onKeyMoved(String key, GeoLocation location) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onGeoQueryReady() {
+//
+//                    }
+//
+//                    @Override
+//                    public void onGeoQueryError(DatabaseError error) {
+//
+//                    }
+//                });
+//                // btn_see_existing_disable.setVisibility(View.VISIBLE);
+//                //iv_existing.setVisibility(View.GONE);
+//                if (key != null) {
+//                    iv_existing.setVisibility(View.VISIBLE);
+//                    btn_see_existing_disable.setVisibility(View.GONE);
+//                    marker.setTag(key);
+//                    iv_existing.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            Toast.makeText(getContext(), "ReviewID" + key, Toast.LENGTH_SHORT).show();
+//                            Intent newIntent = new Intent(getContext(), ChatActivity.class);
+//                            newIntent.putExtra("user_id", key);
+//                            startActivity(newIntent);
+//                        }
+//                    });
+//                } else {
+//                    btn_see_existing_disable.setVisibility(View.VISIBLE);
+//                    iv_existing.setVisibility(View.GONE);
+//                }
+//                tv_location_city.setText(cityName);
+//                tv_location_name.setText(stateName);
+//                dialoge.setView(popup_layer);
+//                final AlertDialog b = dialoge.create();
+//                iv_review.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        final AlertDialog.Builder dialoge2 = new AlertDialog.Builder(getContext());
+//                        //init view
+//                        b.dismiss();
+//                        View popu_review_layout = layoutInflater.inflate(R.layout.popup_review_screen, null);
+//                        tv_location_name = popu_review_layout.findViewById(R.id.location_name);
+//                        tv_location_city = popu_review_layout.findViewById(R.id.location_city_name);
+//                        materialRatingBar = popu_review_layout.findViewById(R.id.rating);
+//                        comment = popu_review_layout.findViewById(R.id.tv_comment);
+//                        submit = popu_review_layout.findViewById(R.id.btn_submit);
+//                        //
+//                        tv_location_city.setText(cityName);
+//                        tv_location_name.setText(stateName);
+//                        dialoge2.setView(popu_review_layout);
+//                        final AlertDialog b2 = dialoge2.create();
+//                        b2.show();
+//                        //Event Rating Bar
+//                        materialRatingBar.setOnRatingChangeListener(new MaterialRatingBar.OnRatingChangeListener() {
+//                            @Override
+//                            public void onRatingChanged(MaterialRatingBar ratingBar, float rating) {
+//                                ratingStar = rating;
+//                            }
+//                        });
+//                        submit.setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View view) {
+//                                creatReview(mGroup_Id, cityName, location);
+//                                b2.dismiss();
+//                            }
+//                        });
+//                    }
+//                });
+//
+//                b.show();
+//                return true;
+//            }
+//        });
+//    }
 
 
     private void SetMap(final double latitud, final double logitude) {
@@ -443,7 +514,7 @@ public class Home extends android.support.v4.app.Fragment implements OnMapReadyC
             final String concateString = cityName + " " + stateName + "" + countryName;
             LatLng latLng = new LatLng(latitud, logitude);
             final AlertDialog.Builder d = new AlertDialog.Builder(getContext());
-            final LayoutInflater layoutInflater = LayoutInflater.from(getContext());
+            final LayoutInflater layoutInflater = getLayoutInflater();
             View popup_layer = layoutInflater.inflate(R.layout.popup, null);
             tv_location_name = popup_layer.findViewById(R.id.location_name);
             tv_location_city = popup_layer.findViewById(R.id.location_city_name);
@@ -484,6 +555,7 @@ public class Home extends android.support.v4.app.Fragment implements OnMapReadyC
                         public void onClick(View view) {
                             LatLng latLng = new LatLng(latitud, logitude);
                             creatReview(mGroup_Id, cityName, latLng);
+                            a1.dismiss();
                             a2.dismiss();
                         }
                     });
@@ -568,7 +640,7 @@ public class Home extends android.support.v4.app.Fragment implements OnMapReadyC
                                                 b.dismiss();
                                                 String id = String.valueOf(marker.getTag());
                                                 Intent newIntent = new Intent(getContext(), ChatActivity.class);
-                                                newIntent.putExtra("from_user_id", id);
+                                                newIntent.putExtra("from_group_id", id);
                                                 startActivity(newIntent);
 
                                             }
@@ -576,6 +648,7 @@ public class Home extends android.support.v4.app.Fragment implements OnMapReadyC
                                         iv_review.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
+                                                b.dismiss();
                                                 SetMap(location.latitude, location.longitude);
                                             }
                                         });
@@ -640,7 +713,7 @@ public class Home extends android.support.v4.app.Fragment implements OnMapReadyC
             Review review = new Review();
             review.setRates(mRateStars);
             review.setComments(mComment);
-            review.setCreated_time(ServerValue.TIMESTAMP);
+            review.setCreated_time(System.currentTimeMillis());
             review.setReview_id(mGroup_id);
             review.setReviewname(cityName);
             review.setLat(location.latitude);
@@ -656,8 +729,8 @@ public class Home extends android.support.v4.app.Fragment implements OnMapReadyC
                         public void onComplete(String key, DatabaseError error) {
                             String latstring = String.valueOf(location.latitude);
                             String longstring = String.valueOf(location.longitude);
-                            mDatabase.child(mGroup_id).child("lat_lng").setValue(latstring + "_" + longstring);
-                            mRootRef.child(mCurrentUser).child("Reviews").child(mGroup_Id).child("null").setValue("");
+//                            mDatabase.child(mGroup_id).child("lat_lng").setValue(latstring + "_" + longstring);
+//                            mRootRef.child(mCurrentUser).child("Reviews").child(mGroup_Id).child("null").setValue("");
                             waitingdialog.dismiss();
                         }
                     });

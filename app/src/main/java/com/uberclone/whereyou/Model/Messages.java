@@ -5,7 +5,7 @@ package com.uberclone.whereyou.Model;
  */
 
 public class Messages {
-    private String message, type,messageImage;
+    private String message, type,messageImage,imageMessage;
     private long  time;
     private boolean seen;
     private String from;
@@ -68,5 +68,13 @@ public class Messages {
 
     public void setFrom(String from) {
         this.from = from;
+    }
+
+    public String getImageMessage() {
+        return imageMessage;
+    }
+
+    public void setImageMessage(String imageMessage) {
+        this.imageMessage = imageMessage;
     }
 }
