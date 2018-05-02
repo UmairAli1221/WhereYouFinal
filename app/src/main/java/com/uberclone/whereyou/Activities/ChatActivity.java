@@ -349,7 +349,6 @@ public class ChatActivity extends AppCompatActivity {
         }
 
     }
-    @NeedsPermission({Manifest.permission.WRITE_EXTERNAL_STORAGE})
     public void uploadImage(String filePath) {
         File fileToUpload = new File(filePath);
 //        fileToUpload = ImageCompressorUtil.compressImage(this, fileToUpload);
